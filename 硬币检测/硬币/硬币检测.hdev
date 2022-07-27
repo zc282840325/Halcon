@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.1" halcon_version="12.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>read_image (Image, 'E:/WorkSpace/HalconDemo/硬币检测/硬币/微信图片_20220620213720.jpg')</l>
+<c></c>
+<c>*均值滤波器</c>
+<l>mean_image (Image, ImageMean, 3, 3)</l>
+<c>*图片增亮</c>
+<l>emphasize (ImageMean, ImageEmphasize, 7, 7, 10)</l>
+<c>*读取模板</c>
+<l>  read_shape_model ('1元.shm', ModelID)</l>
+<c>  </c>
+<l>  read_shape_model ('1角.shm', ModelID1)</l>
+<c>  </c>
+<l>  read_shape_model ('5角.shm', ModelID2)</l>
+<c>  </c>
+<l>  arr:=[ModelID,ModelID1,ModelID2]</l>
+<c>  *设置字体的样式</c>
+<l>    set_display_font (3600, 30, 'mono', 'true', 'false')</l>
+<l>  for Index1 := 0 to 2 by 1</l>
+<c>        *模板匹配</c>
+<l>    find_shape_model (Image, arr[Index1], -0.39, 0.78, 0.4, 0, 0.5, 'least_squares', 2, 0.9, Row, Column, Angle, Score)</l>
+<c></c>
+<l>      if (|Score|&gt;0)</l>
+<l>          tuple_length (Row, Length1)</l>
+<l>          for Index2 := 0 to Length1-1 by 1</l>
+<c>              *字符串显示的位置</c>
+<l>                set_tposition (3600, Row[Index2]-40, Column[Index2]-40)</l>
+<l>     switch (Index1)</l>
+<l>            case 0:</l>
+<l>         dev_set_color ('red')</l>
+<l>         write_string (3600, '1元')</l>
+<l>          break</l>
+<l>             case 1:</l>
+<l>         dev_set_color ('green')</l>
+<l>         write_string (3600, '1角')</l>
+<l>          break</l>
+<l>             case 2:</l>
+<l>          dev_set_color ('blue')</l>
+<l>          write_string (3600, '5角')</l>
+<l>         break</l>
+<l>     endswitch</l>
+<l>          endfor</l>
+<l>      endif</l>
+<l>  endfor</l>
+<c>  </c>
+<c>*创建模板</c>
+<c>*画外圈圆</c>
+<l>* draw_circle (3600, Row1, Column1, Radius)</l>
+<c></c>
+<l>* gen_circle (Circle, Row1, Column1, Radius)</l>
+<c></c>
+<l>* dev_display (Image)</l>
+<c>*画内圈圆</c>
+<l>* draw_circle (3600, Row2, Column2, Radius1)</l>
+<c></c>
+<l>* gen_circle (Circle1, Row2, Column2, Radius1)</l>
+<c>*取区域的差</c>
+<l>* difference (Circle, Circle1, RegionDifference)</l>
+<c></c>
+<l>* reduce_domain (ImageEmphasize, RegionDifference, ImageReduced)</l>
+<c>*创建模板</c>
+<l>* create_shape_model (ImageReduced, 'auto', -0.39, 0.79, 'auto', 'auto', 'use_polarity', 'auto', 'auto', ModelID)</l>
+<c></c>
+<l>* write_shape_model (ModelID, 'D:/WorkSpace/硬币/1元.shm')</l>
+<c></c>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>
